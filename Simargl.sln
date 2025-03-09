@@ -4,6 +4,8 @@ VisualStudioVersion = 17.14.35806.103
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simargl", "Simargl.csproj", "{53C3D64A-57A0-4FF3-8D7E-5EABED8F807B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aga.Controls", "..\..\..\!Repos\Growor\Aga.Controls\Aga.Controls.csproj", "{B919E815-E90E-BFAA-1839-73879E279D86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +16,10 @@ Global
 		{53C3D64A-57A0-4FF3-8D7E-5EABED8F807B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53C3D64A-57A0-4FF3-8D7E-5EABED8F807B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53C3D64A-57A0-4FF3-8D7E-5EABED8F807B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B919E815-E90E-BFAA-1839-73879E279D86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B919E815-E90E-BFAA-1839-73879E279D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B919E815-E90E-BFAA-1839-73879E279D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B919E815-E90E-BFAA-1839-73879E279D86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
