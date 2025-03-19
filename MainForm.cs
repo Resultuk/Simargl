@@ -1,9 +1,10 @@
-using MQTTnet;
-using System.Text;
-using Aga.Controls.Tree.NodeControls;
-using Simargl.Device;
-using System.Text.Json;
 using Aga.Controls.Tree;
+using Aga.Controls.Tree.NodeControls;
+using MQTTnet;
+using Simargl.Device;
+using System;
+using System.Text;
+using System.Text.Json;
 
 namespace Simargl
 {
@@ -68,9 +69,26 @@ namespace Simargl
                                         if (param.ToString() == "Illumination")
                                         {
                                             var bytes = Enumerable.Range(0, (value.ToString()).Length / 2)
-                                                .Select(x => Convert.ToByte((value.ToString()).Substring(x * 2, 2), 16))
+                                                .Select(x => Convert.ToByte(new string(new char[] { (value.ToString())[x * 2 + 1], (value.ToString())[x * 2] }), 16))
                                                 .ToArray();
                                             areaObj.AgroRecipe.Load(bytes);
+                                            Invoke(new Action(() => ShowData()));
+                                        }
+                                        else if (param.ToString() == "Watering")
+                                        {
+                                            var bytes = Enumerable.Range(0, (value.ToString()).Length / 2)
+                                                .Select(x => Convert.ToByte(new string(new char[] { (value.ToString())[x * 2 + 1], (value.ToString())[x * 2] }), 16))
+                                                .ToArray();
+                                            areaObj.WaterClass.Load(bytes);
+                                            Invoke(new Action(() => ShowData()));
+                                        }
+                                        else if (param.ToString() == "Identity")
+                                        {
+                                            var bytes = Enumerable.Range(0, (value.ToString()).Length / 2)
+                                                .Select(x => Convert.ToByte(new string(new char[] { (value.ToString())[x * 2 + 1], (value.ToString())[x * 2] }), 16))
+                                                .ToArray();
+                                            areaObj.SubDevIDs.Load(bytes);
+                                            Invoke(new Action(() => ShowData()));
                                         }
                                     }
                                 }
@@ -96,6 +114,15 @@ namespace Simargl
             };
 
             mqttClient.ConnectAsync(options);
+
+            dataGridView1.Rows.Add(12);
+
+            comboBox1.SelectedIndex = 0;
+
+            for (int i = 0; i < 12; i++)
+            {
+                dataGridView1.Rows[i].HeaderCell.Value = $"Step - {i + 1}";
+            }
         }
 
         private void CreateNode()
@@ -140,7 +167,134 @@ namespace Simargl
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     int value = dialog.SelectedValue;
-                    label1.Text = value == 0 ? "Off" : value + " %";
+                    labSelectedDevice.Text = value == 0 ? "Off" : value + " %";
+                }
+            }
+        }
+
+        private void dataGridView1_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            if (mainTree.SelectedNode.Tag is Area area)
+            {
+                var index = comboBox1.SelectedIndex;
+                if (index < 0) return;
+                var step = area.AgroRecipe.Phases[index].Steps[e.RowIndex];
+                if (e.ColumnIndex == 0)
+                {
+                    if (ushort.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out ushort res))
+                    {
+                        step.Period = Convert.ToUInt16(dataGridView1.Rows[e.RowIndex].Cells[0].Value);
+                    }
+                    else
+                    {
+                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
+                        dataGridView1.Rows[e.RowIndex].Cells[0].Value = step.Period;
+                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
+                    }
+                }
+                else if (e.ColumnIndex == 1)
+                {
+                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
+                    {
+                        step.CH1 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[1].Value);
+                    }
+                    else
+                    {
+                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
+                        dataGridView1.Rows[e.RowIndex].Cells[1].Value = step.CH1;
+                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
+                    }
+                }
+                else if (e.ColumnIndex == 2)
+                {
+                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
+                    {
+                        step.CH2 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[2].Value);
+                    }
+                    else
+                    {
+                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
+                        dataGridView1.Rows[e.RowIndex].Cells[2].Value = step.CH2;
+                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
+                    }
+                }
+                else if (e.ColumnIndex == 3)
+                {
+                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
+                    {
+                        step.CH3 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[3].Value);
+                    }
+                    else
+                    {
+                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
+                        dataGridView1.Rows[e.RowIndex].Cells[3].Value = step.CH3;
+                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
+                    }
+                }
+                else if (e.ColumnIndex == 4)
+                {
+                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
+                    {
+                        step.CH4 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[4].Value);
+                    }
+                    else
+                    {
+                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
+                        dataGridView1.Rows[e.RowIndex].Cells[4].Value = step.CH4;
+                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
+                    }
+                }
+            }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            if (mainTree.SelectedNode.Tag is Area area)
+            {
+                var index = comboBox1.SelectedIndex;
+                if (index < 0) return;
+                area.AgroRecipe.Phases[index].Loops = Convert.ToByte(numericUpDown1.Value);
+            }
+        }
+
+        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.D1 && e.Control)
+            {
+                if (mainTree.SelectedNode.Tag is Area area)
+                {
+                    area.AgroRecipe.Fill();
+                    ShowData();
+                }
+            }
+        }
+
+        private void dateTimePicker1_ValueChanged(object? sender, EventArgs e)
+        {
+            if (mainTree.SelectedNode.Tag is Area area)
+            {
+                DateTimeOffset dateTimeOffset = new DateTimeOffset(dateTimePicker1.Value);
+                area.AgroRecipe.StartTime = (uint)dateTimeOffset.ToUnixTimeSeconds();
+            }
+        }
+        private void ShowData()
+        {
+            if (mainTree.SelectedNode.Tag is Area area)
+            {
+                var index = comboBox1.SelectedIndex;
+                if (index < 0) return;
+                var phase = area.AgroRecipe.Phases[index];
+                numericUpDown1.Value = phase.Loops;
+                dateTimePicker1.Value = DateTimeOffset.FromUnixTimeSeconds(area.AgroRecipe.StartTime).DateTime;
+                for (int i = 0; i < 12; i++)
+                {
+                    dataGridView1.Rows[i].Cells[0].Value = phase.Steps[i].Period;
+                    dataGridView1.Rows[i].Cells[1].Value = phase.Steps[i].CH1;
+                    dataGridView1.Rows[i].Cells[2].Value = phase.Steps[i].CH2;
+                    dataGridView1.Rows[i].Cells[3].Value = phase.Steps[i].CH3;
+                    dataGridView1.Rows[i].Cells[4].Value = phase.Steps[i].CH4;
                 }
             }
         }

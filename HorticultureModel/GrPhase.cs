@@ -10,6 +10,13 @@ namespace Simargl.HorticultureModel
     {
         public ushort Loops { get; set; }
         public GrStep[] Steps { get; set; } = new GrStep[12];
+        public GrPhase()
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                Steps[i] = new GrStep();
+            }
+        }
         public bool Load(byte[] data)
         {
             if (data.Length < 2) return false;

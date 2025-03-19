@@ -18,5 +18,7 @@ namespace Simargl.Device
         public string Name => $"Area #{number}";
         public int Number => number;
         public AgroRecipe AgroRecipe { get; set; } = new AgroRecipe();
+        public WaterClass WaterClass { get; set; } = new WaterClass();
+        public SubDevIDs SubDevIDs { get; set; } = new SubDevIDs();
     }
 }
