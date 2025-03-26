@@ -34,7 +34,7 @@ namespace Growor.Recipe
             phases = [];
             phases.ListChanged += (s, e) => OnPropertyChanged(nameof(Phase));
         }
-        public void AddPhase(Phase phase = null)
+        public void AddPhase(Phase? phase = null)
         {
             phase ??= new Phase();
             phase.PropertyChanged += (s, e) => { OnPropertyChanged(nameof(Phases)); };
@@ -133,7 +133,7 @@ namespace Growor.Recipe
         }
         #endregion
         #region Method
-        public void Add(ActionsType type, object obj = null)
+        public void Add(ActionsType type, object? obj = null)
         {
             switch (type)
             {
@@ -244,8 +244,7 @@ namespace Growor.Recipe
     }
     public class Control : BaseParam, ICloneable
     {
-        private Interval interval;
-
+        private Interval interval = new Interval();
         public Interval Interval { get => interval; set { interval = value; } }
         public new object Clone()
         {
@@ -270,7 +269,7 @@ namespace Growor.Recipe
     }
     public class PhaseInfo : IGuidable
     {
-        public Phase Phase { get; set; }
+        public Phase Phase { get; set; } = new Phase();
         public string Name
         {
             get
@@ -311,9 +310,9 @@ namespace Growor.Recipe
     }
     public class CategoryInfo : IGuidable
     {
-        
-        public BindingList<Period> Periods { get; set; }
-        public string Name { get; set; }
+
+        public BindingList<Period> Periods { get; set; } = new();
+        public string Name { get; set; } = string.Empty;
         public string Duration
         {
             get
@@ -331,7 +330,7 @@ namespace Growor.Recipe
     }
     public class PeriodInfo : IGuidable
     {
-        public Period Period { get; set; }
+        public Period Period { get; set; } = new Period();
         public string Name 
         { 
             get => $"{Period.StartTime / 60:D2}:{Period.StartTime % 60:D2} - {(Period.StartTime + Period.Duration) / 60:D2}:{(Period.StartTime + Period.Duration) % 60:D2}";
@@ -389,7 +388,7 @@ namespace Growor.Recipe
     }
     public class ActionInfo : IGuidable
     {
-        public Action Action { get; set; }
+        public Action Action { get; set; } = new Action();
         public string Name {  get => Action.Name; set => Action.Name = value; }
         public string Duration
         {
@@ -408,10 +407,10 @@ namespace Growor.Recipe
     public class BaseParam : BaseClass, ICloneable
     {
         #region Fields
-        private string name;
-        private string unitOfMeasure;
-        private string description;
-        private string reduction;
+        private string name = string.Empty;
+        private string unitOfMeasure = string.Empty;
+        private string description = string.Empty;
+        private string reduction = string.Empty;
         #endregion
         #region Properties
         public string Name { get => name; set { name = value; OnPropertyChanged(nameof(Name)); } }
@@ -440,7 +439,7 @@ namespace Growor.Recipe
     {
         public readonly Guid Guid = Guid.NewGuid();
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
         #region Methods
         protected void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);

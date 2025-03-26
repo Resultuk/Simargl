@@ -17,6 +17,9 @@ namespace Simargl
             if (mainTree.SelectedNode.Tag is Area area)
             {
                 labSelectedDevice.Text = $"Selected device: {area.Crevis.Name}; Area #{area.Number}";
+                ucWatering1.WaterSettings = area.WaterClass;
+                ucidNumbers1.SubDevIDs = area.SubDevIDs;
+                ucRecipe1.Recipe = area.AgroRecipe;
             }
         }
         private void tsmiRead_Click(object sender, EventArgs e)

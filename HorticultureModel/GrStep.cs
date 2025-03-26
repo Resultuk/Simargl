@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simargl.HorticultureModel
 {
-    internal class GrStep
+    public class GrStep
     {
         public ushort Period { get; set; }
         public byte CH1 { get; set; }

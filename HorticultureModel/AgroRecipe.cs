@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simargl.HorticultureModel
 {
-    internal class AgroRecipe
+    public class AgroRecipe
     {
         public uint StartTime { get; set; }
         public GrPhase[] Phases { get; set; } = new GrPhase[16];
@@ -27,6 +27,7 @@ namespace Simargl.HorticultureModel
                 if (Phases[i] == null) Phases[i] = new GrPhase();
                 if (!Phases[i].Load(data.Skip(16 + i * 80).Take(80).ToArray())) return false;
             }
+            Loaded?.Invoke(this, EventArgs.Empty);
             return true;
         }
         public byte[] GetBytes()
@@ -64,5 +65,6 @@ namespace Simargl.HorticultureModel
                 }
             }
         }
+        public event EventHandler? Loaded;
     }
 }

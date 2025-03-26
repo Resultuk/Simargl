@@ -22,7 +22,10 @@ namespace Simargl
             get => settings; 
             set
             {
+                if (settings.Equals(value)) return;
+                WaterSettings.Loaded -= (s, e) => ToControlIfNeedAction();
                 settings = value;
+                WaterSettings.Loaded += (s, e) => ToControlIfNeedAction();
                 ToControlIfNeedAction();
             }
         }
@@ -105,7 +108,11 @@ namespace Simargl
         }
         private void cbDontStop_CheckedChanged(object? sender, EventArgs e)
         {
-            WaterSettings.DoNotStop = cbDontStop.Checked;
+            if (sender is CheckBox checkBox)
+            {
+                WaterSettings.DoNotStop = checkBox.Checked;
+                ToControl();
+            }
         }
         private void cbMode_SelectedIndexChanged(object? sender, EventArgs e)
         {
@@ -157,12 +164,12 @@ namespace Simargl
                 WaterSettings.LevelNetAddress = (byte)numericUpDown.Value;
             }
         }
-
         private void chbLevel1_CheckedChanged(object? sender, EventArgs e)
         {
             if (sender is CheckBox checkBox)
             {
                 WaterSettings.LevelOn = checkBox.Checked;
+                ToControl();
             }
         }
     }

@@ -1,5 +1,6 @@
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using Growor.Recipe;
 using MQTTnet;
 using Simargl.Device;
 using System;
@@ -13,9 +14,10 @@ namespace Simargl
         public const string Host = "192.168.2.71";
         public const string Username = "result";
         public const string Password = "R2D2R2D2";
-        private MqttClient mqttClient;
+        private MqttClient? mqttClient;
 
-        private NodeTextBox nodeName;
+        private NodeTextBox? nodeName;
+        private NodeTextBox? nodeTime;
         private static Dictionary<string, Crevis> devices = new Dictionary<string, Crevis>();
         private ModelForTree model = new ModelForTree(devices);
         public MainForm()
@@ -24,107 +26,152 @@ namespace Simargl
             CreateNode();
             var mqttFactory = new MqttClientFactory();
             mqttClient = (MqttClient?)mqttFactory.CreateMqttClient();
-            var options = new MqttClientOptionsBuilder()
-                .WithTcpServer(Host)
-                .WithCredentials(Username, Password)
-                .WithClientId("Simargl")
-                .Build();
-            mqttClient.ApplicationMessageReceivedAsync += async eventArgs =>
+
+            if (mqttClient != null)
             {
-                var message = eventArgs.ApplicationMessage;
-                if (message.Topic.StartsWith("info/"))
+                var options = new MqttClientOptionsBuilder()
+                    .WithTcpServer(Host)
+                    .WithCredentials(Username, Password)
+                    .WithClientId("Simargl")
+                    .Build();
+                mqttClient.ApplicationMessageReceivedAsync += async eventArgs =>
                 {
-                    var payload = Encoding.UTF8.GetString(message.Payload);
-                    var data = JsonSerializer.Deserialize<Dictionary<string, string>>(payload);
-                    if (data == null)
+                    var message = eventArgs.ApplicationMessage;
+                    if (message.Topic.StartsWith("info/"))
                     {
-                        return;
-                    }
-                    if (data.TryGetValue("ID", out var id))
-                    {
-                        if (!devices.ContainsKey(id))
+                        var payload = Encoding.UTF8.GetString(message.Payload);
+                        var data = JsonSerializer.Deserialize<Dictionary<string, string>>(payload);
+                        if (data == null)
                         {
-                            var res = Convert.ToUInt64(id, 16);
-                            devices.Add(id, new Crevis { ID = res });
-                            model.NotifyStructureChanged(TreePath.Empty);
+                            return;
+                        }
+                        if (data.TryGetValue("ID", out var id))
+                        {
+                            if (!devices.ContainsKey(id))
+                            {
+                                var res = Convert.ToUInt64(id, 16);
+                                devices.Add(id, new Crevis { ID = res });
+                                model.NotifyStructureChanged(TreePath.Empty);
+                            }
                         }
                     }
-                }
-                else if (message.Topic == "command/response")
-                {
-                    var payload = Encoding.UTF8.GetString(message.Payload);
-                    var data = JsonSerializer.Deserialize<Dictionary<string, object>>(payload);
-                    if (data == null) return;
-                    if (data.TryGetValue("ID", out var id) && data.TryGetValue("Area", out var area) && data.TryGetValue("Param", out var param) && data.TryGetValue("Value", out var value))
+                    else if (message.Topic == "command/response")
                     {
-                        try
+                        var payload = Encoding.UTF8.GetString(message.Payload);
+                        var data = JsonSerializer.Deserialize<Dictionary<string, object>>(payload);
+                        if (data == null) return;
+                        if (data.TryGetValue("ID", out var id) && data.TryGetValue("Area", out var area) && data.TryGetValue("Param", out var param) && data.TryGetValue("Value", out var value))
                         {
-                            if (devices.TryGetValue(id.ToString(), out var crevis))
+                            try
                             {
-                                if (int.TryParse(area.ToString(), out var areaNumber))
+                                if (id != null && devices.TryGetValue(id.ToString()!, out var crevis))
                                 {
-                                    var areaObj = crevis.Areas.FirstOrDefault(a => a.Number == areaNumber);
-                                    if (areaObj != null)
+                                    if (int.TryParse(area.ToString(), out var areaNumber))
                                     {
-                                        if (param.ToString() == "Illumination")
+                                        var areaObj = crevis.Areas.FirstOrDefault(a => a.Number == areaNumber);
+                                        if (areaObj != null && value != null)
                                         {
-                                            var bytes = Enumerable.Range(0, (value.ToString()).Length / 2)
-                                                .Select(x => Convert.ToByte(new string(new char[] { (value.ToString())[x * 2 + 1], (value.ToString())[x * 2] }), 16))
-                                                .ToArray();
-                                            areaObj.AgroRecipe.Load(bytes);
-                                            Invoke(new Action(() => ShowData()));
-                                        }
-                                        else if (param.ToString() == "Watering")
-                                        {
-                                            var bytes = Enumerable.Range(0, (value.ToString()).Length / 2)
-                                                .Select(x => Convert.ToByte(new string(new char[] { (value.ToString())[x * 2 + 1], (value.ToString())[x * 2] }), 16))
-                                                .ToArray();
-                                            areaObj.WaterClass.Load(bytes);
-                                            Invoke(new Action(() => ShowData()));
-                                        }
-                                        else if (param.ToString() == "Identity")
-                                        {
-                                            var bytes = Enumerable.Range(0, (value.ToString()).Length / 2)
-                                                .Select(x => Convert.ToByte(new string(new char[] { (value.ToString())[x * 2 + 1], (value.ToString())[x * 2] }), 16))
-                                                .ToArray();
-                                            areaObj.SubDevIDs.Load(bytes);
-                                            Invoke(new Action(() => ShowData()));
+                                            AppendToRichTextBoxWithInvoke($"- {param} - response");
+                                            if (param.ToString() == "Illumination")
+                                            {
+                                                var bytes = Enumerable.Range(0, (value.ToString()!).Length / 2)
+                                                    .Select(x => Convert.ToByte(new string(new char[] { (value.ToString()!)[x * 2 + 1], (value.ToString()!)[x * 2] }), 16))
+                                                    .ToArray();
+                                                areaObj.AgroRecipe.Load(bytes);
+                                            }
+                                            else if (param.ToString() == "Watering")
+                                            {
+                                                var bytes = Enumerable.Range(0, (value.ToString()!).Length / 2)
+                                                    .Select(x => Convert.ToByte(new string(new char[] { (value.ToString()!)[x * 2 + 1], (value.ToString()!)[x * 2] }), 16))
+                                                    .ToArray();
+                                                areaObj.WaterClass.Load(bytes);
+                                            }
+                                            else if (param.ToString() == "Identity")
+                                            {
+                                                var bytes = Enumerable.Range(0, (value.ToString()!).Length / 2)
+                                                    .Select(x => Convert.ToByte(new string(new char[] { (value.ToString()!)[x * 2 + 1], (value.ToString()!)[x * 2] }), 16))
+                                                    .ToArray();
+                                                areaObj.SubDevIDs.Load(bytes);
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
+                            catch (Exception)
+                            {
 
+                            }
+                        }
+                        else if (data.TryGetValue("DeviceState", out var ds))
+                        {
+                            var deviceState = JsonSerializer.Deserialize<DeviceState>(ds.ToString());
+                            if (deviceState != null)
+                            {
+                                if (devices.TryGetValue(deviceState.ID.ToString()!, out var crevis))
+                                {
+                                    crevis.Time = DateTimeOffset.FromUnixTimeSeconds(deviceState.DateTime).DateTime.ToString("dd.MM.yyyy HH:mm:ss");
+                                    crevis.Areas[0].Time = GetStringForTime(deviceState.AS1.TW);
+                                    crevis.Areas[1].Time = GetStringForTime(deviceState.AS2.TW);
+                                    crevis.Areas[2].Time = GetStringForTime(deviceState.AS3.TW);
+                                    crevis.Areas[3].Time = GetStringForTime(deviceState.AS4.TW);
+                                    model.NotifyStructureChanged(mainTree.GetPath(mainTree.FindNodeByTag(crevis)));
+                                }
+                            }
                         }
                     }
-                }
-                await Task.CompletedTask;
-            };
+                    await Task.CompletedTask;
+                };
 
-            mqttClient.ConnectedAsync += async eventArgs =>
+                mqttClient.ConnectedAsync += async eventArgs =>
+                {
+                    await mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("info/#").Build());
+                    await mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("command/response").Build());
+                };
+                mqttClient.DisconnectedAsync += async eventArgs =>
+                {
+                    await Task.Run(() =>
+                    {
+                        AppendToRichTextBoxWithInvoke(Text = "Disconnected from Mosquitto");
+                    });
+                };
+
+                mqttClient.ConnectAsync(options);
+            }
+            ApplyingSettings();
+        }
+        private string GetStringForTime(uint time)
+        {
+            return $"{(time % 86400 / 3600).ToString().PadLeft(2, '0')}:{(time % 3600 / 60).ToString().PadLeft(2, '0')}:{(time % 60).ToString().PadLeft(2, '0')}";
+        }
+        private void AppendToRichTextBox(string text)
+        {
+            richTextBox1.Text = $"{DateTime.Now:yyyy.MM.dd HH:mm:ss.fff} - {text};\n" + richTextBox1.Text;
+        }
+        private void AppendToRichTextBoxWithInvoke(string text)
+        {
+            if (InvokeRequired)
             {
-                await mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("info/#").Build());
-                await mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("command/response").Build());
-            };
-            mqttClient.DisconnectedAsync += async eventArgs =>
+                Invoke(new System.Action(() => AppendToRichTextBox(text)));
+            }
+            else
             {
-                MessageBox.Show("Disconnected");
-            };
-
-            mqttClient.ConnectAsync(options);
-
-            dataGridView1.Rows.Add(12);
-
-            comboBox1.SelectedIndex = 0;
-
-            for (int i = 0; i < 12; i++)
-            {
-                dataGridView1.Rows[i].HeaderCell.Value = $"Step - {i + 1}";
+                AppendToRichTextBox(text);
             }
         }
-
+        private void ApplyingSettings()
+        {
+            if (AppSets.Default.FullScreen)
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                WindowState = FormWindowState.Normal;
+                StartPosition = FormStartPosition.Manual;
+                Location = new Point(AppSets.Default.Location.X, AppSets.Default.Location.Y);
+                Size = new Size(AppSets.Default.Size.Width, AppSets.Default.Size.Height);
+            }
+        }
         private void CreateNode()
         {
             nodeName = new NodeTextBox
@@ -141,25 +188,22 @@ namespace Simargl
                 //e.TextColor = System.Drawing.Color.Black;
             };
             mainTree.NodeControls.Add(nodeName);
+            nodeTime = new NodeTextBox
+            {
+                ParentColumn = tcStatus,
+                DataPropertyName = "Time",
+                EditEnabled = false,
+                LeftMargin = 3,
+                TrimMultiLine = true,
+                UseCompatibleTextRendering = true
+            };
+            nodeTime.DrawText += (sender, e) =>
+            {
+                //e.TextColor = System.Drawing.Color.Black;
+            };
+            mainTree.NodeControls.Add(nodeTime);
             mainTree.Model = model;
         }
-        private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            // Получаем текущую вкладку
-            TabControl tc = (TabControl)sender;
-            TabPage tabPage = tc.TabPages[e.Index];
-
-            // Настраиваем стиль текста
-            StringFormat stringFormat = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };
-
-            // Рисуем текст горизонтально
-            e.Graphics.DrawString(tabPage.Text, e.Font, Brushes.Black, e.Bounds, stringFormat);
-        }
-
         private void label1_Click(object sender, EventArgs e)
         {
             using (var dialog = new TrackBarDialog(Cursor.Position))
@@ -171,94 +215,6 @@ namespace Simargl
                 }
             }
         }
-
-        private void dataGridView1_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-
-            if (mainTree.SelectedNode.Tag is Area area)
-            {
-                var index = comboBox1.SelectedIndex;
-                if (index < 0) return;
-                var step = area.AgroRecipe.Phases[index].Steps[e.RowIndex];
-                if (e.ColumnIndex == 0)
-                {
-                    if (ushort.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out ushort res))
-                    {
-                        step.Period = Convert.ToUInt16(dataGridView1.Rows[e.RowIndex].Cells[0].Value);
-                    }
-                    else
-                    {
-                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
-                        dataGridView1.Rows[e.RowIndex].Cells[0].Value = step.Period;
-                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
-                    }
-                }
-                else if (e.ColumnIndex == 1)
-                {
-                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
-                    {
-                        step.CH1 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[1].Value);
-                    }
-                    else
-                    {
-                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
-                        dataGridView1.Rows[e.RowIndex].Cells[1].Value = step.CH1;
-                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
-                    }
-                }
-                else if (e.ColumnIndex == 2)
-                {
-                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
-                    {
-                        step.CH2 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[2].Value);
-                    }
-                    else
-                    {
-                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
-                        dataGridView1.Rows[e.RowIndex].Cells[2].Value = step.CH2;
-                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
-                    }
-                }
-                else if (e.ColumnIndex == 3)
-                {
-                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
-                    {
-                        step.CH3 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[3].Value);
-                    }
-                    else
-                    {
-                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
-                        dataGridView1.Rows[e.RowIndex].Cells[3].Value = step.CH3;
-                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
-                    }
-                }
-                else if (e.ColumnIndex == 4)
-                {
-                    if (byte.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out byte res))
-                    {
-                        step.CH4 = Convert.ToByte(dataGridView1.Rows[e.RowIndex].Cells[4].Value);
-                    }
-                    else
-                    {
-                        dataGridView1.CellValueChanged -= dataGridView1_CellValueChanged;
-                        dataGridView1.Rows[e.RowIndex].Cells[4].Value = step.CH4;
-                        dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
-                    }
-                }
-            }
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-            if (mainTree.SelectedNode.Tag is Area area)
-            {
-                var index = comboBox1.SelectedIndex;
-                if (index < 0) return;
-                area.AgroRecipe.Phases[index].Loops = Convert.ToByte(numericUpDown1.Value);
-            }
-        }
-
         private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.D1 && e.Control)
@@ -266,36 +222,42 @@ namespace Simargl
                 if (mainTree.SelectedNode.Tag is Area area)
                 {
                     area.AgroRecipe.Fill();
-                    ShowData();
                 }
             }
         }
 
-        private void dateTimePicker1_ValueChanged(object? sender, EventArgs e)
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (mainTree.SelectedNode.Tag is Area area)
+            AppSets.Default.FullScreen = WindowState == FormWindowState.Maximized;
+            if (WindowState != FormWindowState.Maximized)
             {
-                DateTimeOffset dateTimeOffset = new DateTimeOffset(dateTimePicker1.Value);
-                area.AgroRecipe.StartTime = (uint)dateTimeOffset.ToUnixTimeSeconds();
+                AppSets.Default.Location = Location;
+                AppSets.Default.Size = Size;
             }
+            AppSets.Default.Splitter1 = splitContainer1.SplitterDistance;
+            AppSets.Default.Splitter2 = splitContainer2.SplitterDistance;
+            AppSets.Default.Save();
         }
-        private void ShowData()
+
+        private void MainForm_Load_1(object sender, EventArgs e)
         {
-            if (mainTree.SelectedNode.Tag is Area area)
+            splitContainer1.SplitterDistance = AppSets.Default.Splitter1;
+            splitContainer2.SplitterDistance = AppSets.Default.Splitter2;
+        }
+
+        private void labSelectedDevice_DoubleClick(object sender, EventArgs e)
+        {
+            //if (mainTree.SelectedNode.Tag is Area area)
+            //{
+            //    SendMqttMessage("command/read", new { ID = area.Crevis.ToString(), Area = 0, Param = "State" });
+            //}
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            foreach ( var item in devices.Keys)
             {
-                var index = comboBox1.SelectedIndex;
-                if (index < 0) return;
-                var phase = area.AgroRecipe.Phases[index];
-                numericUpDown1.Value = phase.Loops;
-                dateTimePicker1.Value = DateTimeOffset.FromUnixTimeSeconds(area.AgroRecipe.StartTime).DateTime;
-                for (int i = 0; i < 12; i++)
-                {
-                    dataGridView1.Rows[i].Cells[0].Value = phase.Steps[i].Period;
-                    dataGridView1.Rows[i].Cells[1].Value = phase.Steps[i].CH1;
-                    dataGridView1.Rows[i].Cells[2].Value = phase.Steps[i].CH2;
-                    dataGridView1.Rows[i].Cells[3].Value = phase.Steps[i].CH3;
-                    dataGridView1.Rows[i].Cells[4].Value = phase.Steps[i].CH4;
-                }
+                SendMqttMessage("command/read", new { ID = item, Area = 0, Param = "State" });
             }
         }
     }

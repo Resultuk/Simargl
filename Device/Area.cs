@@ -14,8 +14,9 @@ namespace Simargl.Device
         {
             this.number = number;
         }
-        public Crevis Crevis { get; set; }
+        public Crevis? Crevis { get; set; }
         public string Name => $"Area #{number}";
+        public string Time { get; set; }
         public int Number => number;
         public AgroRecipe AgroRecipe { get; set; } = new AgroRecipe();
         public WaterClass WaterClass { get; set; } = new WaterClass();

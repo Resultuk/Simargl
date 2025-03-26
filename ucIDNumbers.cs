@@ -21,7 +21,10 @@ namespace Simargl
             get => subDevIDs;
             set
             {
+                if (subDevIDs.Equals(value)) return;
+                subDevIDs.Loaded -= (s, e) => ToDataGridViewWithInvoke();
                 subDevIDs = value;
+                subDevIDs.Loaded += (s, e) => ToDataGridViewWithInvoke();
                 ToDataGridViewWithInvoke();
             }
         }
@@ -55,6 +58,8 @@ namespace Simargl
             {
                 dgvLights.Rows[i % 16].Cells[i / 16 * 3].Value = i + 1;
             }
+
+            subDevIDs.Loaded += (s, e) => ToDataGridViewWithInvoke();
         }
         private void ToDataGridViewWithInvoke()
         {
@@ -110,7 +115,10 @@ namespace Simargl
                 var index = e.RowIndex * 4 + e.ColumnIndex / 3;
                 if (dgvSensors.Rows[e.RowIndex].Cells[e.ColumnIndex].Value is string value)
                 {
-                    SubDevIDs.SetSensorID(index, Convert.ToUInt32(value, 16));
+                    SubDevIDs.SetSensorID(index, Convert.ToUInt32(value.Replace("-", "").Replace(" ", ""), 16));
+                    dgvSensors.CellValueChanged -= dgvSensors_CellValueChanged;
+                    dgvSensors.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = SubDevIDs.GetSensorIDString(index);
+                    dgvSensors.CellValueChanged += dgvSensors_CellValueChanged;
                 }
                 else
                 {
@@ -135,7 +143,7 @@ namespace Simargl
                 var index = e.RowIndex * 4 + e.ColumnIndex / 3;
                 if (dgvLights.Rows[e.RowIndex].Cells[e.ColumnIndex].Value is string value)
                 {
-                    SubDevIDs.SetLightID(index, Convert.ToUInt32(value.Replace("-","").Replace(" ",""), 16));
+                    SubDevIDs.SetLightID(index, Convert.ToUInt32(value.Replace("-", "").Replace(" ", ""), 16));
                     dgvLights.CellValueChanged -= dgvLights_CellValueChanged;
                     dgvLights.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = SubDevIDs.GetLightID(index);
                     dgvLights.CellValueChanged += dgvLights_CellValueChanged;
@@ -154,10 +162,9 @@ namespace Simargl
                 }
             }
         }
-
-        private void dgvLights_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void dgv_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            if (dgvLights.CurrentCell.ColumnIndex == 2 || dgvLights.CurrentCell.ColumnIndex == 5 || dgvLights.CurrentCell.ColumnIndex == 8 || dgvLights.CurrentCell.ColumnIndex == 11)
+            if (sender is DataGridView dgv && dgv.CurrentCell != null && (dgv.CurrentCell.ColumnIndex == 2 || dgv.CurrentCell.ColumnIndex == 5 || dgv.CurrentCell.ColumnIndex == 8 || dgv.CurrentCell.ColumnIndex == 11))
             {
                 if (e.Control is TextBox tb)
                 {
@@ -171,8 +178,7 @@ namespace Simargl
         }
         private void TextBox_KeyPress(object? sender, KeyPressEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            if (textBox == null) return;
+            if (sender is not TextBox textBox) return;
             // Разрешить только 0-9, A-F, a-f и Backspace
             if (!Uri.IsHexDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
             {
@@ -214,7 +220,7 @@ namespace Simargl
                 }
             }
         }
-        private void dgvLights_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.ColumnIndex == 2 || e.ColumnIndex == 5 || e.ColumnIndex == 8 || e.ColumnIndex == 11)
             {

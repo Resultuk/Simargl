@@ -98,7 +98,9 @@
             dgvSensors.RowHeadersVisible = false;
             dgvSensors.Size = new Size(594, 125);
             dgvSensors.TabIndex = 1;
+            dgvSensors.CellFormatting += dgv_CellFormatting;
             dgvSensors.CellValueChanged += dgvSensors_CellValueChanged;
+            dgvSensors.EditingControlShowing += dgv_EditingControlShowing;
             // 
             // clmNumber1
             // 
@@ -210,9 +212,9 @@
             dgvLights.RowHeadersVisible = false;
             dgvLights.Size = new Size(594, 393);
             dgvLights.TabIndex = 3;
-            dgvLights.CellFormatting += dgvLights_CellFormatting;
+            dgvLights.CellFormatting += dgv_CellFormatting;
             dgvLights.CellValueChanged += dgvLights_CellValueChanged;
-            dgvLights.EditingControlShowing += dgvLights_EditingControlShowing;
+            dgvLights.EditingControlShowing += dgv_EditingControlShowing;
             // 
             // dataGridViewTextBoxColumn1
             // 

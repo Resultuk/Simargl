@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simargl.HorticultureModel
 {
-    internal class GrPhase
+    public class GrPhase
     {
         public ushort Loops { get; set; }
         public GrStep[] Steps { get; set; } = new GrStep[12];

@@ -31,28 +31,17 @@ namespace Simargl
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             mainTree = new TreeViewAdv();
             tcName = new TreeColumn();
+            tcStatus = new TreeColumn();
             contextMenu = new ContextMenuStrip(components);
             tsmiReadIllum = new ToolStripMenuItem();
             tsmiReadWater = new ToolStripMenuItem();
             tsmiWriteIllum = new ToolStripMenuItem();
             tsmiWriteWater = new ToolStripMenuItem();
-            panel1 = new Panel();
-            dataGridView1 = new DataGridView();
-            cmnPeriod = new DataGridViewTextBoxColumn();
-            cmnCH1 = new DataGridViewTextBoxColumn();
-            cmnCH2 = new DataGridViewTextBoxColumn();
-            cmnCH3 = new DataGridViewTextBoxColumn();
-            cmnCH4 = new DataGridViewTextBoxColumn();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            dateTimePicker1 = new DateTimePicker();
-            comboBox1 = new ComboBox();
-            numericUpDown1 = new NumericUpDown();
             labSelectedDevice = new Label();
             gbIllumination = new GroupBox();
+            ucRecipe1 = new ucRecipe();
             toolStrip3 = new ToolStrip();
             tsbReadIllum = new ToolStripButton();
             tsbWriteIllum = new ToolStripButton();
@@ -61,7 +50,6 @@ namespace Simargl
             toolStrip1 = new ToolStrip();
             tsbReadWater = new ToolStripButton();
             tsbWriteWater = new ToolStripButton();
-            splitter2 = new Splitter();
             panel2 = new Panel();
             gbIdentity = new GroupBox();
             ucidNumbers1 = new ucIDNumbers();
@@ -69,11 +57,12 @@ namespace Simargl
             tsbReadIDs = new ToolStripButton();
             tsbWriteID = new ToolStripButton();
             gbSelected = new GroupBox();
+            richTextBox1 = new RichTextBox();
+            statusStrip1 = new StatusStrip();
+            splitContainer1 = new SplitContainer();
+            splitContainer2 = new SplitContainer();
+            timer1 = new System.Windows.Forms.Timer(components);
             contextMenu.SuspendLayout();
-            panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             gbIllumination.SuspendLayout();
             toolStrip3.SuspendLayout();
             gbWatering.SuspendLayout();
@@ -82,6 +71,14 @@ namespace Simargl
             gbIdentity.SuspendLayout();
             toolStrip2.SuspendLayout();
             gbSelected.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
             SuspendLayout();
             // 
             // mainTree
@@ -89,13 +86,14 @@ namespace Simargl
             mainTree.AutoHeaderHeight = true;
             mainTree.BackColor = SystemColors.Window;
             mainTree.Columns.Add(tcName);
+            mainTree.Columns.Add(tcStatus);
             mainTree.ContextMenuStrip = contextMenu;
-            mainTree.Dock = DockStyle.Left;
+            mainTree.Dock = DockStyle.Fill;
             mainTree.Location = new Point(0, 0);
             mainTree.Name = "mainTree";
-            mainTree.Size = new Size(481, 496);
+            mainTree.Size = new Size(362, 153);
             mainTree.TabIndex = 0;
-            mainTree.Text = "treeViewAdv1";
+            mainTree.Text = "MainTreeView";
             mainTree.UseColumns = true;
             mainTree.SelectionChanged += mainTree_SelectionChanged;
             // 
@@ -103,6 +101,10 @@ namespace Simargl
             // 
             tcName.TextAlign = HorizontalAlignment.Center;
             tcName.Width = 150;
+            // 
+            // tcStatus
+            // 
+            tcStatus.Width = 200;
             // 
             // contextMenu
             // 
@@ -138,151 +140,43 @@ namespace Simargl
             tsmiWriteWater.Text = "Write Watering";
             tsmiWriteWater.Click += tsmiWriteWater_Click;
             // 
-            // panel1
-            // 
-            panel1.Controls.Add(dataGridView1);
-            panel1.Controls.Add(tableLayoutPanel1);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(3, 44);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(572, 335);
-            panel1.TabIndex = 1;
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AllowUserToResizeColumns = false;
-            dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { cmnPeriod, cmnCH1, cmnCH2, cmnCH3, cmnCH4 });
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 34);
-            dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = SystemColors.Control;
-            dataGridViewCellStyle7.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
-            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
-            dataGridView1.RowHeadersWidth = 100;
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle8;
-            dataGridView1.RowTemplate.Height = 22;
-            dataGridView1.Size = new Size(572, 301);
-            dataGridView1.TabIndex = 3;
-            dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
-            dataGridView1.KeyDown += dataGridView1_KeyDown;
-            // 
-            // cmnPeriod
-            // 
-            cmnPeriod.HeaderText = "Period";
-            cmnPeriod.Name = "cmnPeriod";
-            cmnPeriod.Width = 60;
-            // 
-            // cmnCH1
-            // 
-            cmnCH1.HeaderText = "CH1";
-            cmnCH1.Name = "cmnCH1";
-            cmnCH1.Width = 40;
-            // 
-            // cmnCH2
-            // 
-            cmnCH2.HeaderText = "CH2";
-            cmnCH2.Name = "cmnCH2";
-            cmnCH2.Width = 40;
-            // 
-            // cmnCH3
-            // 
-            cmnCH3.HeaderText = "CH3";
-            cmnCH3.Name = "cmnCH3";
-            cmnCH3.Width = 40;
-            // 
-            // cmnCH4
-            // 
-            cmnCH4.HeaderText = "CH4";
-            cmnCH4.Name = "cmnCH4";
-            cmnCH4.Width = 40;
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 77.23404F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22.7659569F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 91F));
-            tableLayoutPanel1.Controls.Add(dateTimePicker1, 0, 0);
-            tableLayoutPanel1.Controls.Add(comboBox1, 1, 0);
-            tableLayoutPanel1.Controls.Add(numericUpDown1, 2, 0);
-            tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(572, 34);
-            tableLayoutPanel1.TabIndex = 7;
-            // 
-            // dateTimePicker1
-            // 
-            dateTimePicker1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            dateTimePicker1.CustomFormat = "yyyy.MM.dd HH:mm";
-            dateTimePicker1.Format = DateTimePickerFormat.Custom;
-            dateTimePicker1.Location = new Point(3, 5);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(365, 23);
-            dateTimePicker1.TabIndex = 0;
-            dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
-            // 
-            // comboBox1
-            // 
-            comboBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Phase-1", "Phase-2", "Phase-3", "Phase-4", "Phase-5", "Phase-6", "Phase-7", "Phase-8", "Phase-9", "Phase-10", "Phase-11", "Phase-12", "Phase-13", "Phase-14", "Phase-15", "Phase-16" });
-            comboBox1.Location = new Point(374, 5);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(103, 23);
-            comboBox1.TabIndex = 2;
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            numericUpDown1.Location = new Point(483, 5);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(86, 23);
-            numericUpDown1.TabIndex = 4;
-            numericUpDown1.TextAlign = HorizontalAlignment.Center;
-            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
-            // 
             // labSelectedDevice
             // 
             labSelectedDevice.Dock = DockStyle.Fill;
             labSelectedDevice.Location = new Point(3, 19);
             labSelectedDevice.Name = "labSelectedDevice";
-            labSelectedDevice.Size = new Size(572, 25);
+            labSelectedDevice.Size = new Size(697, 25);
             labSelectedDevice.TabIndex = 5;
             labSelectedDevice.Text = "label1";
             labSelectedDevice.TextAlign = ContentAlignment.MiddleCenter;
+            labSelectedDevice.DoubleClick += labSelectedDevice_DoubleClick;
             // 
             // gbIllumination
             // 
-            gbIllumination.Controls.Add(panel1);
+            gbIllumination.Controls.Add(ucRecipe1);
             gbIllumination.Controls.Add(toolStrip3);
             gbIllumination.Dock = DockStyle.Top;
             gbIllumination.Location = new Point(0, 255);
             gbIllumination.Name = "gbIllumination";
-            gbIllumination.Size = new Size(578, 382);
+            gbIllumination.Size = new Size(703, 382);
             gbIllumination.TabIndex = 3;
             gbIllumination.TabStop = false;
             gbIllumination.Text = "Illumination";
+            // 
+            // ucRecipe1
+            // 
+            ucRecipe1.Dock = DockStyle.Fill;
+            ucRecipe1.Location = new Point(3, 44);
+            ucRecipe1.Name = "ucRecipe1";
+            ucRecipe1.Size = new Size(697, 335);
+            ucRecipe1.TabIndex = 3;
             // 
             // toolStrip3
             // 
             toolStrip3.Items.AddRange(new ToolStripItem[] { tsbReadIllum, tsbWriteIllum });
             toolStrip3.Location = new Point(3, 19);
             toolStrip3.Name = "toolStrip3";
-            toolStrip3.Size = new Size(572, 25);
+            toolStrip3.Size = new Size(697, 25);
             toolStrip3.TabIndex = 2;
             toolStrip3.Text = "toolStrip3";
             // 
@@ -315,7 +209,7 @@ namespace Simargl
             gbWatering.Dock = DockStyle.Top;
             gbWatering.Location = new Point(0, 47);
             gbWatering.Name = "gbWatering";
-            gbWatering.Size = new Size(578, 208);
+            gbWatering.Size = new Size(703, 208);
             gbWatering.TabIndex = 4;
             gbWatering.TabStop = false;
             gbWatering.Text = "Watering";
@@ -325,7 +219,7 @@ namespace Simargl
             ucWatering1.Dock = DockStyle.Top;
             ucWatering1.Location = new Point(3, 44);
             ucWatering1.Name = "ucWatering1";
-            ucWatering1.Size = new Size(572, 153);
+            ucWatering1.Size = new Size(697, 153);
             ucWatering1.TabIndex = 0;
             // 
             // toolStrip1
@@ -333,7 +227,7 @@ namespace Simargl
             toolStrip1.Items.AddRange(new ToolStripItem[] { tsbReadWater, tsbWriteWater });
             toolStrip1.Location = new Point(3, 19);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(572, 25);
+            toolStrip1.Size = new Size(697, 25);
             toolStrip1.TabIndex = 1;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -359,14 +253,6 @@ namespace Simargl
             tsbWriteWater.ToolTipText = "Write data to the device";
             tsbWriteWater.Click += tsbWriteWater_Click;
             // 
-            // splitter2
-            // 
-            splitter2.Location = new Point(481, 0);
-            splitter2.Name = "splitter2";
-            splitter2.Size = new Size(10, 496);
-            splitter2.TabIndex = 5;
-            splitter2.TabStop = false;
-            // 
             // panel2
             // 
             panel2.AutoScroll = true;
@@ -375,9 +261,9 @@ namespace Simargl
             panel2.Controls.Add(gbWatering);
             panel2.Controls.Add(gbSelected);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(491, 0);
+            panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(595, 496);
+            panel2.Size = new Size(720, 552);
             panel2.TabIndex = 6;
             // 
             // gbIdentity
@@ -387,7 +273,7 @@ namespace Simargl
             gbIdentity.Dock = DockStyle.Top;
             gbIdentity.Location = new Point(0, 637);
             gbIdentity.Name = "gbIdentity";
-            gbIdentity.Size = new Size(578, 622);
+            gbIdentity.Size = new Size(703, 622);
             gbIdentity.TabIndex = 6;
             gbIdentity.TabStop = false;
             gbIdentity.Text = "Devices";
@@ -397,7 +283,7 @@ namespace Simargl
             ucidNumbers1.Dock = DockStyle.Fill;
             ucidNumbers1.Location = new Point(3, 44);
             ucidNumbers1.Name = "ucidNumbers1";
-            ucidNumbers1.Size = new Size(572, 575);
+            ucidNumbers1.Size = new Size(697, 575);
             ucidNumbers1.TabIndex = 0;
             // 
             // toolStrip2
@@ -405,7 +291,7 @@ namespace Simargl
             toolStrip2.Items.AddRange(new ToolStripItem[] { tsbReadIDs, tsbWriteID });
             toolStrip2.Location = new Point(3, 19);
             toolStrip2.Name = "toolStrip2";
-            toolStrip2.Size = new Size(572, 25);
+            toolStrip2.Size = new Size(697, 25);
             toolStrip2.TabIndex = 1;
             toolStrip2.Text = "toolStrip2";
             // 
@@ -437,26 +323,81 @@ namespace Simargl
             gbSelected.Dock = DockStyle.Top;
             gbSelected.Location = new Point(0, 0);
             gbSelected.Name = "gbSelected";
-            gbSelected.Size = new Size(578, 47);
+            gbSelected.Size = new Size(703, 47);
             gbSelected.TabIndex = 5;
             gbSelected.TabStop = false;
             gbSelected.Text = "Information";
+            // 
+            // richTextBox1
+            // 
+            richTextBox1.Dock = DockStyle.Fill;
+            richTextBox1.Location = new Point(0, 0);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(362, 395);
+            richTextBox1.TabIndex = 2;
+            richTextBox1.Text = "";
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Location = new Point(0, 552);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(1086, 22);
+            statusStrip1.TabIndex = 8;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // splitContainer1
+            // 
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.Controls.Add(splitContainer2);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(panel2);
+            splitContainer1.Size = new Size(1086, 552);
+            splitContainer1.SplitterDistance = 362;
+            splitContainer1.TabIndex = 9;
+            // 
+            // splitContainer2
+            // 
+            splitContainer2.Dock = DockStyle.Fill;
+            splitContainer2.Location = new Point(0, 0);
+            splitContainer2.Name = "splitContainer2";
+            splitContainer2.Orientation = Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            splitContainer2.Panel1.Controls.Add(mainTree);
+            // 
+            // splitContainer2.Panel2
+            // 
+            splitContainer2.Panel2.Controls.Add(richTextBox1);
+            splitContainer2.Size = new Size(362, 552);
+            splitContainer2.SplitterDistance = 153;
+            splitContainer2.TabIndex = 0;
+            // 
+            // timer1
+            // 
+            timer1.Enabled = true;
+            timer1.Interval = 1000;
+            timer1.Tick += timer1_Tick;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1086, 496);
-            Controls.Add(panel2);
-            Controls.Add(splitter2);
-            Controls.Add(mainTree);
+            ClientSize = new Size(1086, 574);
+            Controls.Add(splitContainer1);
+            Controls.Add(statusStrip1);
             Name = "MainForm";
             Text = "Simargl";
+            FormClosed += MainForm_FormClosed;
+            Load += MainForm_Load_1;
             contextMenu.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             gbIllumination.ResumeLayout(false);
             gbIllumination.PerformLayout();
             toolStrip3.ResumeLayout(false);
@@ -471,7 +412,16 @@ namespace Simargl
             toolStrip2.ResumeLayout(false);
             toolStrip2.PerformLayout();
             gbSelected.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -480,24 +430,12 @@ namespace Simargl
         private TreeColumn tcName;
         private ContextMenuStrip contextMenu;
         private ToolStripMenuItem tsmiReadIllum;
-        private Panel panel1;
-        private DateTimePicker dateTimePicker1;
-        private NumericUpDown numericUpDown1;
-        private DataGridView dataGridView1;
-        private ComboBox comboBox1;
         private Label labSelectedDevice;
-        private TableLayoutPanel tableLayoutPanel1;
-        private DataGridViewTextBoxColumn cmnPeriod;
-        private DataGridViewTextBoxColumn cmnCH1;
-        private DataGridViewTextBoxColumn cmnCH2;
-        private DataGridViewTextBoxColumn cmnCH3;
-        private DataGridViewTextBoxColumn cmnCH4;
         private ToolStripMenuItem tsmiWriteIllum;
         private GroupBox gbIllumination;
         private ToolStripMenuItem tsmiReadWater;
         private GroupBox gbWatering;
         private ucWatering ucWatering1;
-        private Splitter splitter2;
         private ToolStripMenuItem tsmiWriteWater;
         private ToolStrip toolStrip1;
         private ToolStripButton tsbReadWater;
@@ -512,5 +450,12 @@ namespace Simargl
         private ToolStrip toolStrip3;
         private ToolStripButton tsbReadIllum;
         private ToolStripButton tsbWriteIllum;
+        private RichTextBox richTextBox1;
+        private ucRecipe ucRecipe1;
+        private StatusStrip statusStrip1;
+        private SplitContainer splitContainer1;
+        private SplitContainer splitContainer2;
+        private TreeColumn tcStatus;
+        private System.Windows.Forms.Timer timer1;
     }
 }
