@@ -15,11 +15,15 @@ namespace Simargl.Device
             this.number = number;
         }
         public Crevis? Crevis { get; set; }
-        public string Name => $"Area #{number}";
-        public string Time { get; set; }
         public int Number => number;
+        public Watering Watering { get; set; } = new Watering();
+
         public AgroRecipe AgroRecipe { get; set; } = new AgroRecipe();
         public WaterClass WaterClass { get; set; } = new WaterClass();
         public SubDevIDs SubDevIDs { get; set; } = new SubDevIDs();
+
+        public string Name => $"Area #{number}";
+        public Bitmap? StateIcon => null;
+        public string StateText => string.Empty;
     }
 }

@@ -26,12 +26,23 @@ namespace Simargl.Device
                 Crevis crevis = (Crevis)treePath.LastNode;
                 ArrayList.AddRange(crevis.Areas);
             }
+            else if (treePath.LastNode is Area)
+            {
+                Area area = (Area)treePath.LastNode;
+                ArrayList.Add(area.Watering);
+            }
+            else if (treePath.LastNode is Watering)
+            {
+                Watering watering = (Watering)treePath.LastNode;
+                ArrayList.Add(watering.Pump);
+                ArrayList.Add(watering.Gate);
+            }
             return ArrayList;
         }
 
         public override bool IsLeaf(TreePath treePath)
         {
-            if (treePath.LastNode is Crevis)
+            if (treePath.LastNode is Crevis || treePath.LastNode is Area || treePath.LastNode is Watering)
             {
                 return false;
             }

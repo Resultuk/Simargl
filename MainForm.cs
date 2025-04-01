@@ -17,7 +17,9 @@ namespace Simargl
         private MqttClient? mqttClient;
 
         private NodeTextBox? nodeName;
-        private NodeTextBox? nodeTime;
+        private NodeIcon? nodeIconState;
+        private NodeTextBox? nodeTextState;
+
         private static Dictionary<string, Crevis> devices = new Dictionary<string, Crevis>();
         private ModelForTree model = new ModelForTree(devices);
         public MainForm()
@@ -110,11 +112,32 @@ namespace Simargl
                                 if (devices.TryGetValue(deviceState.ID.ToString()!, out var crevis))
                                 {
                                     crevis.Time = DateTimeOffset.FromUnixTimeSeconds(deviceState.DateTime).DateTime.ToString("dd.MM.yyyy HH:mm:ss");
-                                    crevis.Areas[0].Time = GetStringForTime(deviceState.AS1.TW);
-                                    crevis.Areas[1].Time = GetStringForTime(deviceState.AS2.TW);
-                                    crevis.Areas[2].Time = GetStringForTime(deviceState.AS3.TW);
-                                    crevis.Areas[3].Time = GetStringForTime(deviceState.AS4.TW);
-                                    model.NotifyStructureChanged(mainTree.GetPath(mainTree.FindNodeByTag(crevis)));
+                                    crevis.Areas[0].Watering.Time = GetStringForTime((uint)deviceState.AS1.TW);
+                                    crevis.Areas[1].Watering.Time = GetStringForTime((uint)deviceState.AS2.TW);
+                                    crevis.Areas[2].Watering.Time = GetStringForTime((uint)deviceState.AS3.TW);
+                                    crevis.Areas[3].Watering.Time = GetStringForTime((uint)deviceState.AS4.TW);
+
+                                    crevis.Areas[0].Watering.Enabled = deviceState.AS1.En;
+                                    crevis.Areas[1].Watering.Enabled = deviceState.AS2.En;
+                                    crevis.Areas[2].Watering.Enabled = deviceState.AS3.En;
+                                    crevis.Areas[3].Watering.Enabled = deviceState.AS4.En;
+
+                                    crevis.Areas[0].Watering.Auto = deviceState.AS1.Auto;
+                                    crevis.Areas[1].Watering.Auto = deviceState.AS2.Auto;
+                                    crevis.Areas[2].Watering.Auto = deviceState.AS3.Auto;
+                                    crevis.Areas[3].Watering.Auto = deviceState.AS4.Auto;
+
+                                    crevis.Areas[0].Watering.Pump.Running = deviceState.AS1.Pump;
+                                    crevis.Areas[1].Watering.Pump.Running = deviceState.AS2.Pump;
+                                    crevis.Areas[2].Watering.Pump.Running = deviceState.AS3.Pump;
+                                    crevis.Areas[3].Watering.Pump.Running = deviceState.AS4.Pump;
+
+                                    crevis.Areas[0].Watering.Gate.IsOpen = deviceState.AS1.Gate;
+                                    crevis.Areas[1].Watering.Gate.IsOpen = deviceState.AS2.Gate;
+                                    crevis.Areas[2].Watering.Gate.IsOpen = deviceState.AS3.Gate;
+                                    crevis.Areas[3].Watering.Gate.IsOpen = deviceState.AS4.Gate;
+
+                                    Invoke(new System.Action(() => model.NotifyStructureChanged(mainTree.GetPath(mainTree.FindNodeByTag(crevis)))));
                                 }
                             }
                         }
@@ -188,20 +211,28 @@ namespace Simargl
                 //e.TextColor = System.Drawing.Color.Black;
             };
             mainTree.NodeControls.Add(nodeName);
-            nodeTime = new NodeTextBox
+
+            nodeIconState = new NodeIcon
+            {
+                ParentColumn = tcControl,
+                DataPropertyName = "StateIcon",
+                LeftMargin = 3,
+            };
+
+            mainTree.NodeControls.Add(nodeIconState);
+
+            nodeTextState = new NodeTextBox
             {
                 ParentColumn = tcStatus,
-                DataPropertyName = "Time",
+                DataPropertyName = "StateText",
                 EditEnabled = false,
                 LeftMargin = 3,
                 TrimMultiLine = true,
                 UseCompatibleTextRendering = true
             };
-            nodeTime.DrawText += (sender, e) =>
-            {
-                //e.TextColor = System.Drawing.Color.Black;
-            };
-            mainTree.NodeControls.Add(nodeTime);
+
+            mainTree.NodeControls.Add(nodeTextState);
+
             mainTree.Model = model;
         }
         private void label1_Click(object sender, EventArgs e)
@@ -255,9 +286,74 @@ namespace Simargl
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            foreach ( var item in devices.Keys)
+            foreach (var item in devices.Keys)
             {
-                SendMqttMessage("command/read", new { ID = item, Area = 0, Param = "State" });
+                //SendMqttMessage("command/read", new { ID = item, Area = 0, Param = "State" });
+                //Invoke(new System.Action(() =>
+                //
+                    //SendMqttMessage("command/control", new { ID = item, Area = 1, Param = "Pump", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 1, Param = "Gate", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 2, Param = "Pump", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 2, Param = "Gate", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 3, Param = "Pump", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 3, Param = "Gate", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 4, Param = "Pump", Value = true });
+                    //System.Threading.Thread.Sleep(100);
+                    //SendMqttMessage("command/control", new { ID = item, Area = 4, Param = "Gate", Value = true });
+                //}));
+            }
+        }
+
+        private void mainTree_NodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
+        {
+            try
+            {
+                if (e.Control is NodeIcon ni && ni.DataPropertyName == "StateIcon")
+                {
+                    if (e.Node.Tag is Watering watering)
+                    {
+                        if (e.Node.Parent.Tag is Area area)
+                        {
+                            if (e.Node.Parent.Parent.Tag is Crevis crevis)
+                            {
+                                SendMqttMessage("command/control", new { ID = crevis.ToString(), Area = area.Number, Param = "WaterMode", Value = !watering.Auto });
+                                //SendMqttMessage("command/control", new { ID = crevis.ToString(), Area = 2, Param = "WaterMode", Value = !watering.Auto });
+                            }
+                        }
+                    }
+                    else if (e.Node.Tag is Pump pump)
+                    {
+                        if (e.Node.Parent.Tag is Watering)
+                        {
+                            if (e.Node.Parent.Parent.Tag is Area area)
+                            {
+                                SendMqttMessage("command/control", new { ID = area.Crevis.ToString(), Area = area.Number, Param = "Pump", Value = !pump.Running });
+                            }
+                        }
+                    }
+                    else if (e.Node.Tag is Gate gate)
+                    {
+                        if (e.Node.Parent.Tag is Watering)
+                        {
+                            if (e.Node.Parent.Parent.Tag is Area area)
+                            {
+
+                                SendMqttMessage("command/control", new { ID = area.Crevis.ToString(), Area = area.Number, Param = "Gate", Value = !gate.IsOpen });
+
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
             }
         }
     }

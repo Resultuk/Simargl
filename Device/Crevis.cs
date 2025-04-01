@@ -12,6 +12,9 @@ namespace Simargl.Device
         public Area[] Areas { get; set; }
         public string Name { get => new string(BitConverter.ToString(BitConverter.GetBytes(ID).Reverse().ToArray()).Skip(6).ToArray()); }
         public string Time { get; set; }
+        public Bitmap? StateIcon => null;
+        public string StateText => string.Empty;
+
         public override string ToString()
         {
             return Name.Replace("-", string.Empty);

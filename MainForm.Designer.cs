@@ -33,6 +33,7 @@ namespace Simargl
             components = new System.ComponentModel.Container();
             mainTree = new TreeViewAdv();
             tcName = new TreeColumn();
+            tcControl = new TreeColumn();
             tcStatus = new TreeColumn();
             contextMenu = new ContextMenuStrip(components);
             tsmiReadIllum = new ToolStripMenuItem();
@@ -86,15 +87,18 @@ namespace Simargl
             mainTree.AutoHeaderHeight = true;
             mainTree.BackColor = SystemColors.Window;
             mainTree.Columns.Add(tcName);
+            mainTree.Columns.Add(tcControl);
             mainTree.Columns.Add(tcStatus);
             mainTree.ContextMenuStrip = contextMenu;
             mainTree.Dock = DockStyle.Fill;
             mainTree.Location = new Point(0, 0);
             mainTree.Name = "mainTree";
-            mainTree.Size = new Size(362, 153);
+            mainTree.RowHeight = 20;
+            mainTree.Size = new Size(613, 368);
             mainTree.TabIndex = 0;
             mainTree.Text = "MainTreeView";
             mainTree.UseColumns = true;
+            mainTree.NodeMouseClick += mainTree_NodeMouseClick;
             mainTree.SelectionChanged += mainTree_SelectionChanged;
             // 
             // tcName
@@ -102,9 +106,14 @@ namespace Simargl
             tcName.TextAlign = HorizontalAlignment.Center;
             tcName.Width = 150;
             // 
+            // tcControl
+            // 
+            tcControl.TextAlign = HorizontalAlignment.Center;
+            tcControl.Width = 40;
+            // 
             // tcStatus
             // 
-            tcStatus.Width = 200;
+            tcStatus.Width = 120;
             // 
             // contextMenu
             // 
@@ -145,7 +154,7 @@ namespace Simargl
             labSelectedDevice.Dock = DockStyle.Fill;
             labSelectedDevice.Location = new Point(3, 19);
             labSelectedDevice.Name = "labSelectedDevice";
-            labSelectedDevice.Size = new Size(697, 25);
+            labSelectedDevice.Size = new Size(446, 25);
             labSelectedDevice.TabIndex = 5;
             labSelectedDevice.Text = "label1";
             labSelectedDevice.TextAlign = ContentAlignment.MiddleCenter;
@@ -158,7 +167,7 @@ namespace Simargl
             gbIllumination.Dock = DockStyle.Top;
             gbIllumination.Location = new Point(0, 255);
             gbIllumination.Name = "gbIllumination";
-            gbIllumination.Size = new Size(703, 382);
+            gbIllumination.Size = new Size(452, 382);
             gbIllumination.TabIndex = 3;
             gbIllumination.TabStop = false;
             gbIllumination.Text = "Illumination";
@@ -168,7 +177,7 @@ namespace Simargl
             ucRecipe1.Dock = DockStyle.Fill;
             ucRecipe1.Location = new Point(3, 44);
             ucRecipe1.Name = "ucRecipe1";
-            ucRecipe1.Size = new Size(697, 335);
+            ucRecipe1.Size = new Size(446, 335);
             ucRecipe1.TabIndex = 3;
             // 
             // toolStrip3
@@ -176,7 +185,7 @@ namespace Simargl
             toolStrip3.Items.AddRange(new ToolStripItem[] { tsbReadIllum, tsbWriteIllum });
             toolStrip3.Location = new Point(3, 19);
             toolStrip3.Name = "toolStrip3";
-            toolStrip3.Size = new Size(697, 25);
+            toolStrip3.Size = new Size(446, 25);
             toolStrip3.TabIndex = 2;
             toolStrip3.Text = "toolStrip3";
             // 
@@ -209,7 +218,7 @@ namespace Simargl
             gbWatering.Dock = DockStyle.Top;
             gbWatering.Location = new Point(0, 47);
             gbWatering.Name = "gbWatering";
-            gbWatering.Size = new Size(703, 208);
+            gbWatering.Size = new Size(452, 208);
             gbWatering.TabIndex = 4;
             gbWatering.TabStop = false;
             gbWatering.Text = "Watering";
@@ -219,7 +228,7 @@ namespace Simargl
             ucWatering1.Dock = DockStyle.Top;
             ucWatering1.Location = new Point(3, 44);
             ucWatering1.Name = "ucWatering1";
-            ucWatering1.Size = new Size(697, 153);
+            ucWatering1.Size = new Size(446, 153);
             ucWatering1.TabIndex = 0;
             // 
             // toolStrip1
@@ -227,7 +236,7 @@ namespace Simargl
             toolStrip1.Items.AddRange(new ToolStripItem[] { tsbReadWater, tsbWriteWater });
             toolStrip1.Location = new Point(3, 19);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(697, 25);
+            toolStrip1.Size = new Size(446, 25);
             toolStrip1.TabIndex = 1;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -263,7 +272,7 @@ namespace Simargl
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(720, 552);
+            panel2.Size = new Size(469, 552);
             panel2.TabIndex = 6;
             // 
             // gbIdentity
@@ -273,7 +282,7 @@ namespace Simargl
             gbIdentity.Dock = DockStyle.Top;
             gbIdentity.Location = new Point(0, 637);
             gbIdentity.Name = "gbIdentity";
-            gbIdentity.Size = new Size(703, 622);
+            gbIdentity.Size = new Size(452, 622);
             gbIdentity.TabIndex = 6;
             gbIdentity.TabStop = false;
             gbIdentity.Text = "Devices";
@@ -283,7 +292,7 @@ namespace Simargl
             ucidNumbers1.Dock = DockStyle.Fill;
             ucidNumbers1.Location = new Point(3, 44);
             ucidNumbers1.Name = "ucidNumbers1";
-            ucidNumbers1.Size = new Size(697, 575);
+            ucidNumbers1.Size = new Size(446, 575);
             ucidNumbers1.TabIndex = 0;
             // 
             // toolStrip2
@@ -291,7 +300,7 @@ namespace Simargl
             toolStrip2.Items.AddRange(new ToolStripItem[] { tsbReadIDs, tsbWriteID });
             toolStrip2.Location = new Point(3, 19);
             toolStrip2.Name = "toolStrip2";
-            toolStrip2.Size = new Size(697, 25);
+            toolStrip2.Size = new Size(446, 25);
             toolStrip2.TabIndex = 1;
             toolStrip2.Text = "toolStrip2";
             // 
@@ -323,7 +332,7 @@ namespace Simargl
             gbSelected.Dock = DockStyle.Top;
             gbSelected.Location = new Point(0, 0);
             gbSelected.Name = "gbSelected";
-            gbSelected.Size = new Size(703, 47);
+            gbSelected.Size = new Size(452, 47);
             gbSelected.TabIndex = 5;
             gbSelected.TabStop = false;
             gbSelected.Text = "Information";
@@ -333,7 +342,7 @@ namespace Simargl
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(362, 395);
+            richTextBox1.Size = new Size(613, 180);
             richTextBox1.TabIndex = 2;
             richTextBox1.Text = "";
             // 
@@ -359,7 +368,7 @@ namespace Simargl
             // 
             splitContainer1.Panel2.Controls.Add(panel2);
             splitContainer1.Size = new Size(1086, 552);
-            splitContainer1.SplitterDistance = 362;
+            splitContainer1.SplitterDistance = 613;
             splitContainer1.TabIndex = 9;
             // 
             // splitContainer2
@@ -376,8 +385,8 @@ namespace Simargl
             // splitContainer2.Panel2
             // 
             splitContainer2.Panel2.Controls.Add(richTextBox1);
-            splitContainer2.Size = new Size(362, 552);
-            splitContainer2.SplitterDistance = 153;
+            splitContainer2.Size = new Size(613, 552);
+            splitContainer2.SplitterDistance = 368;
             splitContainer2.TabIndex = 0;
             // 
             // timer1
@@ -457,5 +466,6 @@ namespace Simargl
         private SplitContainer splitContainer2;
         private TreeColumn tcStatus;
         private System.Windows.Forms.Timer timer1;
+        private TreeColumn tcControl;
     }
 }

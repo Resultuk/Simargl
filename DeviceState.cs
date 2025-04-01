@@ -19,6 +19,10 @@ namespace Simargl
     }
     internal class AreaState
     {
-        public uint TW { get; set; }
+        public int TW { get; set; }
+        public bool Pump { get; set; }
+        public bool Gate { get; set; }
+        public bool En { get; set; }
+        public bool Auto { get; set; }
     }
 }

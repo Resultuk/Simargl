@@ -9,5 +9,7 @@ namespace Simargl.Device
     internal interface ITreeDisplayed
     {
         public string Name { get; }
+        public Bitmap? StateIcon { get; }
+        public string StateText { get; }
     }
 }

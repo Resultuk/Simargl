@@ -114,7 +114,7 @@
             cbMode.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel.SetColumnSpan(cbMode, 2);
             cbMode.FormattingEnabled = true;
-            cbMode.Items.AddRange(new object[] { "Error", "Disable", "Manual", "Auto(Manual)", "Auto" });
+            cbMode.Items.AddRange(new object[] { "Disable", "Manual", "Auto(Manual)", "Auto" });
             cbMode.Location = new Point(83, 1);
             cbMode.Margin = new Padding(3, 1, 3, 3);
             cbMode.Name = "cbMode";
