@@ -112,7 +112,7 @@ namespace Simargl
             if (e.RowIndex < 0 || e.RowIndex > 3) return;
             if (e.ColumnIndex == 2 || e.ColumnIndex == 5 || e.ColumnIndex == 8 || e.ColumnIndex == 11)
             {
-                var index = e.RowIndex * 4 + e.ColumnIndex / 3;
+                var index = e.RowIndex + e.ColumnIndex / 3 * 4;
                 if (dgvSensors.Rows[e.RowIndex].Cells[e.ColumnIndex].Value is string value)
                 {
                     SubDevIDs.SetSensorID(index, Convert.ToUInt32(value.Replace("-", "").Replace(" ", ""), 16));
@@ -127,7 +127,7 @@ namespace Simargl
             }
             else if (e.ColumnIndex == 1 || e.ColumnIndex == 4 || e.ColumnIndex == 7 || e.ColumnIndex == 10)
             {
-                var index = e.RowIndex * 4 + e.ColumnIndex / 3;
+                var index = e.RowIndex + e.ColumnIndex / 3 * 16;
                 if (dgvSensors.Rows[e.RowIndex].Cells[e.ColumnIndex].Value is bool value)
                 {
                     SubDevIDs.SensorOn(index, value);

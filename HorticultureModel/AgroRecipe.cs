@@ -9,6 +9,8 @@ namespace Simargl.HorticultureModel
     public class AgroRecipe
     {
         public uint StartTime { get; set; }
+        public ushort Mode { get; set; }
+        public ushort SwitchToAuto { get; set; }
         public GrPhase[] Phases { get; set; } = new GrPhase[16];
         public AgroRecipe()
         {
@@ -21,6 +23,8 @@ namespace Simargl.HorticultureModel
         {
             if (data.Length < 4) return false;
             StartTime = BitConverter.ToUInt32(data, 0);
+            Mode = BitConverter.ToUInt16(data, 4);
+            SwitchToAuto = BitConverter.ToUInt16(data, 6);
             if (data.Length < 4 + 16 * (2 + 12 * 6)) return false;
             for (int i = 0; i < 16; i++)
             {
@@ -34,7 +38,9 @@ namespace Simargl.HorticultureModel
         {
             var data = new List<byte>();
             data.AddRange(BitConverter.GetBytes(StartTime));
-            data.AddRange(new byte[12]);
+            data.AddRange(BitConverter.GetBytes(Mode));
+            data.AddRange(BitConverter.GetBytes(SwitchToAuto));
+            data.AddRange(new byte[8]);
             for (int i = 0; i < 16; i++)
             {
                 data.AddRange(BitConverter.GetBytes(Phases[i].Loops));

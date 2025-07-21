@@ -52,15 +52,15 @@ namespace Simargl
             cbMode.SelectedIndexChanged += cbMode_SelectedIndexChanged;
 
             tBSwtc_ch.TextChanged -= tBLoop_ch_TextChanged;
-            tBSwtc_ch.Text = GetStringForTime(WaterSettings.SwitchToAuto);
+            tBSwtc_ch.Text = Utils.GetStringForTime(WaterSettings.SwitchToAuto);
             tBSwtc_ch.TextChanged += tBLoop_ch_TextChanged;
 
             tBWork_ch.TextChanged -= tBLoop_ch_TextChanged;
-            tBWork_ch.Text = GetStringForTime(WaterSettings.WorkTime);
+            tBWork_ch.Text = Utils.GetStringForTime(WaterSettings.WorkTime);
             tBWork_ch.TextChanged += tBLoop_ch_TextChanged;
 
             tBLoop_ch.TextChanged -= tBLoop_ch_TextChanged;
-            tBLoop_ch.Text = GetStringForTime(WaterSettings.RepeatTime);
+            tBLoop_ch.Text = Utils.GetStringForTime(WaterSettings.RepeatTime);
             tBLoop_ch.TextChanged += tBLoop_ch_TextChanged;
 
             dtpStart_ch.ValueChanged -= dtpStart_ch_ValueChanged;
@@ -93,10 +93,6 @@ namespace Simargl
 
             nudLevelNetAddr1.Enabled = chbLevel1.Checked;
             dtpEnd_ch.Enabled = !cbDontStop.Checked;
-        }
-        private string GetStringForTime(uint time)
-        {
-            return $"{(time % 86400 / 3600).ToString().PadLeft(2, '0')}:{(time % 3600 / 60).ToString().PadLeft(2, '0')}:{(time % 60).ToString().PadLeft(2, '0')}";
         }
         private void dtpStart_ch_ValueChanged(object? sender, EventArgs e)
         {

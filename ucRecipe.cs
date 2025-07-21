@@ -32,6 +32,11 @@ namespace Simargl
         {
             InitializeComponent();
             recipe.Loaded += (s, e) => ToControlIfNeedAction();
+
+            // Регистрация событий для tBSwtc_ch
+            tBSwtc_ch.Enter += tBSwtc_ch_Enter;
+            tBSwtc_ch.Leave += tBSwtc_ch_Leave;
+
             dataGridView1.Rows.Add(12);
             for (int i = 0; i < 12; i++)
             {
@@ -59,6 +64,14 @@ namespace Simargl
             dateTimePicker1.ValueChanged -= dateTimePicker1_ValueChanged;
             dateTimePicker1.Value = DateTimeOffset.FromUnixTimeSeconds(Recipe.StartTime).DateTime;
             dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
+
+            tBSwtc_ch.TextChanged -= tBSwtc_ch_TextChanged;
+            tBSwtc_ch.Text = Utils.GetStringForTime(Recipe.SwitchToAuto);
+            tBSwtc_ch.TextChanged += tBSwtc_ch_TextChanged;
+
+            cbMode.SelectedIndexChanged -= cbMode_SelectedIndexChanged;
+            cbMode.SelectedIndex = Recipe.Mode;
+            cbMode.SelectedIndexChanged += cbMode_SelectedIndexChanged;
 
             for (int i = 0; i < 12; i++)
             {
@@ -159,8 +172,53 @@ namespace Simargl
 
         private void dateTimePicker1_ValueChanged(object? sender, EventArgs e)
         {
-            DateTimeOffset dateTimeOffset = new DateTimeOffset(dateTimePicker1.Value);
+            DateTimeOffset dateTimeOffset = DateTime.SpecifyKind(dateTimePicker1.Value, DateTimeKind.Utc);
             Recipe.StartTime = (uint)dateTimeOffset.ToUnixTimeSeconds();
+        }
+
+        private void tBSwtc_ch_TextChanged(object? sender, EventArgs e)
+        {
+            if (sender is TextBox textbox)
+            {
+                if (ushort.TryParse(textbox.Text, out ushort res))
+                {
+                    Recipe.SwitchToAuto = Convert.ToUInt16(textbox.Text);
+                }
+                else
+                {
+                    textbox.TextChanged -= tBSwtc_ch_TextChanged;
+                    textbox.Text = Recipe.SwitchToAuto.ToString();
+                    textbox.TextChanged += tBSwtc_ch_TextChanged;
+                }
+            }
+        }
+
+        private void cbMode_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                Recipe.Mode = (ushort)comboBox.SelectedIndex;
+            }
+        }
+
+        private void tBSwtc_ch_Enter(object sender, EventArgs e)
+        {
+            if (sender is TextBox textbox)
+            {
+                // Убираем форматирование и показываем число в секундах
+                textbox.Text = Recipe.SwitchToAuto.ToString();
+            }
+        }
+
+        private void tBSwtc_ch_Leave(object sender, EventArgs e)
+        {
+            if (sender is TextBox textbox)
+            {
+                // Применяем форматирование HH:mm:ss
+                textbox.TextChanged -= tBSwtc_ch_TextChanged;
+                textbox.Text = Utils.GetStringForTime(Recipe.SwitchToAuto);
+                textbox.TextChanged += tBSwtc_ch_TextChanged;
+            }
         }
     }
 }

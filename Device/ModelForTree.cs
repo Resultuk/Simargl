@@ -30,6 +30,8 @@ namespace Simargl.Device
             {
                 Area area = (Area)treePath.LastNode;
                 ArrayList.Add(area.Watering);
+                ArrayList.Add(area.Lighting);
+                ArrayList.Add(area.Sensors);
             }
             else if (treePath.LastNode is Watering)
             {
@@ -37,18 +39,34 @@ namespace Simargl.Device
                 ArrayList.Add(watering.Pump);
                 ArrayList.Add(watering.Gate);
             }
+            else if (treePath.LastNode is Lighting)
+            {
+                Lighting lighting = (Lighting)treePath.LastNode;
+                ArrayList.Add(lighting.CH1);
+                ArrayList.Add(lighting.CH2);
+                ArrayList.Add(lighting.CH3);
+                ArrayList.Add(lighting.CH4);
+            }
+            else if (treePath.LastNode is Sensors)
+            {
+                ArrayList.AddRange(((Sensors)treePath.LastNode).List.OrderBy(x => x.Key).Select(x => x.Value).ToArray());
+            }
+            else if (treePath.LastNode is Sensor)
+            {
+                ArrayList.AddRange(((Sensor)treePath.LastNode).Params.Values);
+            }
             return ArrayList;
         }
 
         public override bool IsLeaf(TreePath treePath)
         {
-            if (treePath.LastNode is Crevis || treePath.LastNode is Area || treePath.LastNode is Watering)
+            if (treePath.LastNode is Param || treePath.LastNode is Pump || treePath.LastNode is Gate || treePath.LastNode is Channel)
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
         public void NotifyStructureChanged(TreePath treePath)

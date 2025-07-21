@@ -73,9 +73,29 @@ namespace Simargl {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap bullet_ball_grey {
+            get {
+                object obj = ResourceManager.GetObject("bullet_ball_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap bullet_ball_red {
             get {
                 object obj = ResourceManager.GetObject("bullet_ball_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap bullet_ball_yellow {
+            get {
+                object obj = ResourceManager.GetObject("bullet_ball_yellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
